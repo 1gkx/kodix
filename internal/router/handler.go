@@ -1,69 +1,73 @@
 package router
 
 import (
-	"database/sql"
 	"encoding/json"
+	"kodix/internal/store"
 	"net/http"
 )
 
 type Handler struct {
-	store *sql.DB
+	store *store.Db
 }
 
 func (h *Handler) getItems(w http.ResponseWriter, r *http.Request) {
 
-	rows, err := h.store.QueryContext(r.Context(), `
-		SELECT * FROM auto;
-	`)
+	data, err := h.store.GetAuto(r.Context())
 	if err != nil {
 		response(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	defer rows.Close()
 
-	response(w, http.StatusOK, "")
+	response(w, http.StatusOK, data)
 }
 
 func (h *Handler) addItems(w http.ResponseWriter, r *http.Request) {
 
-	rows, err := h.store.QueryContext(r.Context(), `
-		SELECT * FROM auto;
-	`)
+	var req *store.Auto
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		response(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	data, err := h.store.AddAuto(r.Context(), req)
 	if err != nil {
 		response(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	defer rows.Close()
 
-	response(w, http.StatusOK, "")
+	response(w, http.StatusOK, data)
 }
 
 func (h *Handler) updateItems(w http.ResponseWriter, r *http.Request) {
 
-	rows, err := h.store.QueryContext(r.Context(), `
-		SELECT * FROM auto;
-	`)
+	var req *store.Auto
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		response(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	data, err := h.store.UpdateAuto(r.Context(), req)
 	if err != nil {
 		response(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	defer rows.Close()
 
-	response(w, http.StatusOK, "")
+	response(w, http.StatusOK, data)
 }
 
 func (h *Handler) deleteItems(w http.ResponseWriter, r *http.Request) {
 
-	rows, err := h.store.QueryContext(r.Context(), `
-		SELECT * FROM auto;
-	`)
-	if err != nil {
+	var req map[string]uint
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		response(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	defer rows.Close()
 
-	response(w, http.StatusOK, "")
+	if err := h.store.DeleteAuto(r.Context(), req["id"]); err != nil {
+		response(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	response(w, http.StatusOK, "Ok")
 }
 
 func (h *Handler) notFound(w http.ResponseWriter, r *http.Request) {

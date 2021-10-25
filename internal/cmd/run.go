@@ -18,6 +18,8 @@ var Start = cli.Command{
 	Action:      runWeb,
 }
 
+const PORT = ":3333"
+
 func runWeb(c *cli.Context) {
 
 	db, err := store.InitStore()
@@ -28,8 +30,8 @@ func runWeb(c *cli.Context) {
 
 	router := router.NewRouter(db)
 
-	fmt.Printf("Server start at %s port\n", ":8000")
-	if err := http.ListenAndServe(":8000", router); err != nil {
+	fmt.Printf("Server start at %s port\n", PORT)
+	if err := http.ListenAndServe(PORT, router); err != nil {
 		log.Fatal(err)
 	}
 }

@@ -1,13 +1,14 @@
 package router
 
 import (
-	"database/sql"
 	"net/http"
 
 	"github.com/gorilla/mux"
+
+	"kodix/internal/store"
 )
 
-func NewRouter(db *sql.DB) *mux.Router {
+func NewRouter(db *store.Db) *mux.Router {
 
 	route := mux.NewRouter().StrictSlash(true)
 
