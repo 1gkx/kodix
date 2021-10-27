@@ -56,7 +56,7 @@ func (h *Handler) updateItems(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) deleteItems(w http.ResponseWriter, r *http.Request) {
 
-	var req map[string]uint
+	var req map[string]uint32
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		response(w, http.StatusInternalServerError, err.Error())
 		return
